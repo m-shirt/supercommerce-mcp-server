@@ -1,5 +1,5 @@
 import { McpServer, ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { toolPaths } from "../src/tools/paths.js"; // Your array of tool relative paths
+import { toolPaths } from "./tools/paths.js";
 
 
 const mcpServer = new McpServer({
