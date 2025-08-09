@@ -2,7 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
 
-export function createSSEServer(mcpServer) {
+export function createSSEServer(mcpServer: McpServer) {
   const app = express();
 
   const transportMap = new Map();
