@@ -4,11 +4,10 @@
   "description": "Example MCP SSE Server",
   "type": "module",
   "author": "Yunus Emre Dilber <yunusemredilber@yandex.com>",
-  "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "concurrently \"npx @modelcontextprotocol/inspector\" \"yarn start\""
-  },
+"scripts": {
+  "start": "node --loader ts-node/esm api/index.ts",
+  "dev": "concurrently \"npx @modelcontextprotocol/inspector\" \"yarn start\""
+},
   "private": true,
   "devDependencies": {
     "@types/cors": "^2.8.17",

@@ -4,4 +4,8 @@ import { createSSEServer } from "./sse-server.js";
 
 const sseServer = createSSEServer(mcpServer);
 
-sseServer.listen(process.env.PORT || 3001);
+if (process.env.VERCEL !== '1') {
+  sseServer.listen(process.env.PORT || 3001, () => {
+    console.log('Server listening locally on port', process.env.PORT || 3001);
+  });
+}
