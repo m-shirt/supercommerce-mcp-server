@@ -4,5 +4,5 @@ import { createSSEServer } from '../src/sse-server.js';
 
 const sseServer = createSSEServer(mcpServer);
 
-// Just export the Express/SSE server instance — no listen here!
+// Export the Express app, do NOT listen here
 export default sseServer;
