@@ -8,7 +8,7 @@ export function createSSEServer(mcpServer: McpServer) {
   const transportMap = new Map();
 
   app.get("/sse", async (req, res) => {
-    const transport = new SSEServerTransport("/messages", res);
+    const transport = new SSEServerTransport("/supercommerce_api/mcp/messages", res);
     transportMap.set(transport.sessionId, transport);
     await mcpServer.connect(transport);
 
@@ -23,7 +23,7 @@ export function createSSEServer(mcpServer: McpServer) {
     });
   });
 
-  app.post("/messages", (req, res) => {
+  app.post("/supercommerce_api/mcp/messages", (req, res) => {
     const sessionId = req.query.sessionId;
     if (!sessionId) {
       console.error("Message received without sessionId");
