@@ -12,7 +12,12 @@
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
-    "noEmit": true,
+
+    // CHANGE HERE:
+    "noEmit": false,           // Emit JS files for Node to run
+    "outDir": "./dist",        // Output compiled JS here
+    "rootDir": "./src",        // Your source TS files folder
+
     "strict": true,
     "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true,

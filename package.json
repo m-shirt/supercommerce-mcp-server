@@ -5,7 +5,8 @@
   "type": "module",
   "author": "Yunus Emre Dilber <yunusemredilber@yandex.com>",
   "scripts": {
-    "start": "node --loader ts-node/esm src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
     "dev": "concurrently \"npx @modelcontextprotocol/inspector\" \"yarn start\""
   },
   "private": true,
