@@ -7,13 +7,10 @@ export function createSSEServer(mcpServer: McpServer) {
 
   const transportMap = new Map();
 
-  app.get("/sse", async (req, res) => {
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
+  app.get("/supercommerce_api/mcp/sse", async (req, res) => {
 
-    // Flush headers to start SSE stream
-    res.flushHeaders();
+ 
+   
     const transport = new SSEServerTransport("/supercommerce_api/mcp/messages", res);
     transportMap.set(transport.sessionId, transport);
     await mcpServer.connect(transport);
