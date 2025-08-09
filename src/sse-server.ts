@@ -29,6 +29,10 @@ export function createSSEServer(mcpServer: McpServer) {
   });
 
   app.post("/supercommerce_api/mcp/messages", (req, res) => {
+
+     res.setHeader("Access-Control-Allow-Origin", "*");
+     res.setHeader("Access-Control-Allow-Credentials", "true");  // if you want to support cookies/auth
+
     const sessionId = req.query.sessionId;
     if (!sessionId) {
       console.error("Message received without sessionId");
