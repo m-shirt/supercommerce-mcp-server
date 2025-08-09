@@ -1,9 +1,17 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
+import cors from "cors";
 
 export function createSSEServer(mcpServer: McpServer) {
   const app = express();
+  // Add CORS middleware here, before routes
+  app.use(cors({
+    origin: "*",
+    credentials: true,
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type"]
+  }));
 
   const transportMap = new Map();
 
@@ -30,8 +38,9 @@ export function createSSEServer(mcpServer: McpServer) {
 
   app.post("/supercommerce_api/mcp/messages", (req, res) => {
 
-     res.setHeader("Access-Control-Allow-Origin", "*");
-     res.setHeader("Access-Control-Allow-Credentials", "true");  // if you want to support cookies/auth
+    res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Credentials", "true");  // optional, if you want cookies/auth
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
     const sessionId = req.query.sessionId;
     if (!sessionId) {
