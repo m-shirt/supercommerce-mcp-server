@@ -10,7 +10,9 @@ export function createSSEServer(mcpServer: McpServer) {
   app.get("/supercommerce_api/mcp/sse", async (req, res) => {
 
  
-   
+     res.setHeader("Access-Control-Allow-Origin", "*");
+     res.setHeader("Access-Control-Allow-Credentials", "true");  // if you want to support cookies/auth
+
     const transport = new SSEServerTransport("/supercommerce_api/mcp/messages", res);
     transportMap.set(transport.sessionId, transport);
     await mcpServer.connect(transport);
