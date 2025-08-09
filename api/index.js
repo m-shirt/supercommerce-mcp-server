@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { mcpServer } from './mcp-server.js';
-import { createSSEServer } from './sse-server.js';
+import { mcpServer } from '../src/mcp-server.js';
+import { createSSEServer } from '../src/sse-server.js';
 
 const sseServer = createSSEServer(mcpServer);
 
