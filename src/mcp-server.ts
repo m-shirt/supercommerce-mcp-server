@@ -1,5 +1,6 @@
 import { McpServer, ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { toolPaths } from "./tools/paths.js";
+import { z } from "zod";
 
 
 const mcpServer = new McpServer({
@@ -8,6 +9,8 @@ const mcpServer = new McpServer({
 }, {
   capabilities: {},
 });
+
+
 
 mcpServer.resource(
   'document',
@@ -35,6 +38,76 @@ mcpServer.resource(
     }
   }
 );
+
+
+
+function jsonSchemaToZod(schema: any): z.ZodTypeAny {
+  // Handle union types like ['string', 'null']
+  if (Array.isArray(schema.type)) {
+    const nonNullType = schema.type.find((t: string) => t !== "null");
+    const baseType = jsonSchemaToZod({ ...schema, type: nonNullType });
+    return schema.type.includes("null") ? baseType.nullable() : baseType;
+  }
+
+  switch (schema.type) {
+    case "string":
+      return z.string();
+
+    case "number":
+      return z.number();
+
+    case "integer":
+      return z.number().int();
+
+    case "boolean":
+      return z.boolean();
+
+    case "array":
+      if (!schema.items) {
+        throw new Error("Array type must have 'items'");
+      }
+      return z.array(jsonSchemaToZod(schema.items));
+
+    case "object":
+      if (!schema.properties) {
+        return z.object({}).passthrough(); // allow any if no properties defined
+      }
+      const shape: Record<string, z.ZodTypeAny> = {};
+      for (const [propName, propSchema] of Object.entries<any>(schema.properties)) {
+        let propType = jsonSchemaToZod(propSchema);
+        if (!schema.required || !schema.required.includes(propName)) {
+          propType = propType.optional();
+        }
+        if (propSchema.description) {
+          propType = propType.describe(propSchema.description);
+        }
+        shape[propName] = propType;
+      }
+      return z.object(shape);
+
+    default:
+      throw new Error(`Unsupported type: ${schema.type}`);
+  }
+}
+
+function jsonSchemaToZodShape(jsonSchema: any): Record<string, z.ZodTypeAny> {
+  if (jsonSchema.type !== "object" || !jsonSchema.properties) {
+    throw new Error("Top-level schema must be type object");
+  }
+
+  const shape: Record<string, z.ZodTypeAny> = {};
+  for (const [propName, propSchema] of Object.entries<any>(jsonSchema.properties)) {
+    let zodType = jsonSchemaToZod(propSchema);
+    if (propSchema.description) {
+      zodType = zodType.describe(propSchema.description);
+    }
+    if (!jsonSchema.required || !jsonSchema.required.includes(propName)) {
+      zodType = zodType.optional();
+    }
+    shape[propName] = zodType;
+  }
+  return shape;
+}
 
 const registeredTools = new Set<string>();
 
@@ -64,11 +137,16 @@ async function registerTools() {
         continue;
       }
 
-      const { definition = {} } = apiTool;
+     
+ const definition_obj = {
+    title: apiTool.definition.function.name,
+    description: apiTool.definition.function.description,
+    inputSchema: jsonSchemaToZodShape(apiTool.definition.function.parameters),
+  };
 
       mcpServer.registerTool(
-        toolName,
-        definition,
+         toolName,
+         definition_obj,
         async (args, extra) => {
           // Call your tool function with the provided arguments
           const rawResult = await toolFunc(args);

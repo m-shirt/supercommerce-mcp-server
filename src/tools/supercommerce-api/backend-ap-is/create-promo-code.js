@@ -218,24 +218,11 @@ Must send all keys as in the request body.`,
           'description',
           'type',
           'amount',
-          'max_amount',
           'expiration_date',
-          'start_date',
-          'random_count',
-          'minimum_amount',
-          'uses_per_user',
-          'usage_limit',
-          'customer_phones',
-          'target_type',
+          'start_date',      
           'work_with_promotion',
-          'first_order',
-          'free_delivery',
           'show_in_product',
-          'check_all_conditions',
-          'vendor_id',
-          'mobile_only',
-          'payment_methods',
-          'customer_ids'
+          'free_delivery'
         ]
       }
     }
