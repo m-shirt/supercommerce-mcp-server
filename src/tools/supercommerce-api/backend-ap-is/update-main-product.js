@@ -83,7 +83,7 @@ const apiTool = {
             description: 'The ID of the product to update.'
           },
           brand_id: {
-            type: 'integer',
+            type: 'string',
             description: 'The ID of the brand.'
           },
           category_id: {
@@ -119,10 +119,11 @@ const apiTool = {
           },
           type: {
             type: 'string',
-            description: 'The type of the product.'
+            description: 'The type of the product. "1" for regular, "2" for bundle.'
           }
         },
-        required: ['id', 'brand_id', 'category_id', 'name', 'sku', 'type']
+       required: ['id', 'brand_id', 'category_id', 'name', 'sku', 'type' , 'bundle_checkout' , 'available_soon'],
+
       }
     }
   }
