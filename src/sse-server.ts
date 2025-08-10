@@ -1,7 +1,10 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import express from "express";
 import cors from "cors";
+import type { Request, Response } from "express";
+
 
 export function createSSEServer(mcpServer: McpServer) {
   const app = express();
@@ -15,7 +18,47 @@ export function createSSEServer(mcpServer: McpServer) {
 
   const transportMap = new Map();
 
-  app.get("/supercommerce_api/mcp/sse", async (req, res) => {
+
+app.post("/supercommerce_api/mcp", express.json(), async (req: Request, res: Response) => {
+  try {
+    // Create a transport for this request
+    const transport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: undefined, // or provide your own
+    });
+
+    // Close transport when client disconnects
+    res.on("close", async () => {
+      try {
+        await transport.close();
+      } catch (err) {
+        console.error("Error closing transport:", err);
+      }
+    });
+
+    // Connect MCP server to transport
+    await mcpServer.connect(transport);
+
+    // Handle the incoming JSON-RPC request
+    await transport.handleRequest(req, res, req.body);
+
+  } catch (error) {
+    console.error("Error handling MCP request:", error);
+
+    if (!res.headersSent) {
+      res.status(500).json({
+        jsonrpc: "2.0",
+        error: {
+          code: -32603,
+          message: "Internal server error",
+        },
+        id: null,
+      });
+    }
+  }
+});
+    // streamableHttpServer(mcpServer, app, "/supercommerce_api/mcp");
+
+  app.get("/supercommerce_api/mcp/sse", async (req: Request, res: Response) => {
 
  
      res.setHeader("Access-Control-Allow-Origin", "*");
@@ -36,7 +79,7 @@ export function createSSEServer(mcpServer: McpServer) {
     });
   });
 
-  app.post("/supercommerce_api/mcp/messages", (req, res) => {
+  app.post("/supercommerce_api/mcp/messages", (req: Request, res: Response) => {
 
     res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Credentials", "true");  // optional, if you want cookies/auth
@@ -57,6 +100,9 @@ export function createSSEServer(mcpServer: McpServer) {
 
     transport.handlePostMessage(req, res);
   });
+
+
+
 
   return app;
 }

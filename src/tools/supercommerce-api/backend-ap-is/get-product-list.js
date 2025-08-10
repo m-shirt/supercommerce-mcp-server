@@ -35,7 +35,7 @@ const executeFunction = async ({ page, keyword_or_sku, category_id, sub_category
       method: 'GET',
       headers
     });
-    console.log('url:', url.toString());
+    console.error('url:', url.toString());
 
     // Check if the response was successful
     if (!response.ok) {

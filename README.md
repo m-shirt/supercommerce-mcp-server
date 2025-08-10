@@ -70,5 +70,6 @@ PORT=5000 yarn start
 - [@modelcontextprotocol/sdk](https://www.npmjs.com/package/@modelcontextprotocol/sdk) - SDK for Model Context Protocol
 - [Express](https://expressjs.com/) - Web framework for Node.js
 
-
+ npx tsc
 nodemon index.ts
+node --loader ts-node/esm src/index.ts
